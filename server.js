@@ -55,7 +55,8 @@ function countVisitsPerService(service) {
             });
         }
     });
-    return { visitCount, messages };
+    const sortedMessages = Object.entries(messages).sort((a, b) => b[1] - a[1]);
+    return { visitCount, messages: Object.fromEntries(sortedMessages) };
 }
 
 function makeSureLogDirExists(service) {
