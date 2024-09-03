@@ -15,7 +15,7 @@ app.get('/', (req, res, next) => {
     const visits = countVisits();
     const timeEnd = Date.now();
     const timeElapsed = timeEnd - timeStart;
-    
+
     res.send({ visits, timeElapsed });
 });
 
@@ -38,17 +38,24 @@ function countVisits() {
 function countVisitsPerService(service) {
     makeSureLogDirExists(service);
     let visitCount = 0;
+    let messages = {};
     fs.readdirSync(path.join(__dirname, '..', service, 'log', 'visit')).forEach(file => {
         let fileAgeDays = (Date.now() - new Date(file.split('.')[0])) / 1000 / 60 / 60 / 24;
         if (fileAgeDays < 7) {
             fs.readFileSync(path.join(__dirname, '..', service, 'log', 'visit', file)).toString().split('\n').forEach(line => {
                 if (line) {
                     visitCount++;
+                    const entry = JSON.parse(line);
+                    if (messages[entry.message]) {
+                        messages[entry.message]++;
+                    } else {
+                        messages[entry.message] = 1;
+                    }
                 }
             });
         }
     });
-    return visitCount;
+    return { visitCount, messages };
 }
 
 function makeSureLogDirExists(service) {
