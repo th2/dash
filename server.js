@@ -80,7 +80,7 @@ function countEndpointVisitsPerService(service) {
                     const entry = JSON.parse(line);
 
                     mapCount(messages, entry.message);
-                    mapCount(remoteAddress, entry.meta.req.cf_ip);
+                    mapCount(cf_ip, entry.meta.req.cf_ip);
                     mapCount(remoteAddress, entry.meta.req.connection.remoteAddress);
                     mapCount(accept, entry.meta.req.headers['accept']);
                     mapCount(referer, entry.meta.req.headers['referer']);
