@@ -19,6 +19,15 @@ app.get('/', (req, res, next) => {
     res.send({ visits, timeElapsed });
 });
 
+app.get('/base', (req, res, next) => {
+    const timeStart = Date.now();
+    const visits = countEndpointVisitsPerService('base');
+    const timeEnd = Date.now();
+    const timeElapsed = timeEnd - timeStart;
+
+    res.send({ visits, timeElapsed });
+});
+
 app.use((req, res) => {
     res.send('');
 });
@@ -38,7 +47,27 @@ function countVisits() {
 function countVisitsPerService(service) {
     makeSureLogDirExists(service);
     let visitCount = 0;
+    fs.readdirSync(path.join(__dirname, '..', service, 'log', 'visit')).forEach(file => {
+        let fileAgeDays = (Date.now() - new Date(file.split('.')[0])) / 1000 / 60 / 60 / 24;
+        if (fileAgeDays < 7) {
+            fs.readFileSync(path.join(__dirname, '..', service, 'log', 'visit', file)).toString().split('\n').forEach(line => {
+                if (line) {
+                    visitCount++;
+                }
+            });
+        }
+    });
+    return visitCount;
+}
+
+function countEndpointVisitsPerService(service) {
+    makeSureLogDirExists(service);
+    let visitCount = 0;
     let messages = {};
+    let remoteAddress = {};
+    let accept = {};
+    let referer = {};
+    let userAgent = {};
     fs.readdirSync(path.join(__dirname, '..', service, 'log', 'visit')).forEach(file => {
         let fileAgeDays = (Date.now() - new Date(file.split('.')[0])) / 1000 / 60 / 60 / 24;
         if (fileAgeDays < 7) {
@@ -46,17 +75,37 @@ function countVisitsPerService(service) {
                 if (line) {
                     visitCount++;
                     const entry = JSON.parse(line);
-                    if (messages[entry.message]) {
-                        messages[entry.message]++;
-                    } else {
-                        messages[entry.message] = 1;
-                    }
+
+                    mapCount(messages, entry.message);
+                    mapCount(remoteAddress, entry.meta.req.connection.remoteAddress);
+                    mapCount(accept, entry.meta.req.headers['accept']);
+                    mapCount(referer, entry.meta.req.headers['referer']);
+                    mapCount(userAgent, entry.meta.req.headers['user-agent']);
                 }
             });
         }
     });
-    const sortedMessages = Object.entries(messages).sort((a, b) => b[1] - a[1]);
-    return { visitCount, messages: Object.fromEntries(sortedMessages) };
+    return { 
+        visitCount, 
+        messages: sortByValue(messages),
+        remoteAddress: sortByValue(remoteAddress),
+        accept: sortByValue(accept),
+        referer: sortByValue(referer),
+        userAgent: sortByValue(userAgent)
+
+    };
+}
+
+function sortByValue(obj) {
+    return Object.fromEntries(Object.entries(obj).sort((a, b) => b[1] - a[1]));
+}
+
+function mapCount(aggregator, element) {
+    if (aggregator[element]) {
+        aggregator[element]++;
+    } else {
+        aggregator[element] = 1;
+    }
 }
 
 function makeSureLogDirExists(service) {
