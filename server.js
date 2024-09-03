@@ -1,4 +1,5 @@
 const express = require('express');
+const cloudflare = require('cloudflare-express');
 const app = express();
 const http = require('http').createServer(app);
 const logger = require('./logger.js');
@@ -8,6 +9,7 @@ const { count } = require('console');
 
 const services = fs.readdirSync(path.join(__dirname, '..')).filter(file => fs.statSync(path.join(__dirname, '..', file)).isDirectory());
 
+app.use(cloudflare.restore({update_on_start:true}));
 app.use(logger.visitReq());
 
 app.get('/', (req, res, next) => {
@@ -64,6 +66,7 @@ function countEndpointVisitsPerService(service) {
     makeSureLogDirExists(service);
     let visitCount = 0;
     let messages = {};
+    let cf_ip = {};
     let remoteAddress = {};
     let accept = {};
     let referer = {};
@@ -77,6 +80,7 @@ function countEndpointVisitsPerService(service) {
                     const entry = JSON.parse(line);
 
                     mapCount(messages, entry.message);
+                    mapCount(remoteAddress, entry.meta.req.cf_ip);
                     mapCount(remoteAddress, entry.meta.req.connection.remoteAddress);
                     mapCount(accept, entry.meta.req.headers['accept']);
                     mapCount(referer, entry.meta.req.headers['referer']);
@@ -88,6 +92,7 @@ function countEndpointVisitsPerService(service) {
     return { 
         visitCount, 
         messages: sortByValue(messages),
+        cf_ip: sortByValue(cf_ip),
         remoteAddress: sortByValue(remoteAddress),
         accept: sortByValue(accept),
         referer: sortByValue(referer),

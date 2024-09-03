@@ -16,6 +16,7 @@ var errorTransport = new (winston.transports.DailyRotateFile)({
     winston.format.timestamp(),
     winston.format.json())
 });
+expressWinston.requestWhitelist.push('cf_ip');
 expressWinston.requestWhitelist.push('connection.remoteAddress');
 module.exports.visitReq = (req, res) => expressWinston.logger({ transports: [visitTransport] });
 module.exports.errorReq = (req, res) => expressWinston.errorLogger({ transports: [errorTransport] });

@@ -8,6 +8,7 @@
   },
   "author": "",
   "dependencies": {
+    "cloudflare-express": "^1.0.1",
     "express": "^4.19.2",
     "express-winston": "^4.2.0",
     "winston": "^3.14.2",
