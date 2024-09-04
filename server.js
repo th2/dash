@@ -65,12 +65,17 @@ function countVisitsPerService(service) {
 function countEndpointVisitsPerService(service) {
     makeSureLogDirExists(service);
     let visitCount = 0;
-    let messages = {};
-    let cf_ip = {};
     let remoteAddress = {};
+    let cf_ip = {};
+    let cf_connecting_ip = {};
+    let x_forwarded_for = {};
+    let cf_ipcountry = {};
+    let host = {};
     let accept = {};
     let referer = {};
     let userAgent = {};
+    let messages = {};
+
     fs.readdirSync(path.join(__dirname, '..', service, 'log', 'visit')).forEach(file => {
         let fileAgeDays = (Date.now() - new Date(file.split('.')[0])) / 1000 / 60 / 60 / 24;
         if (fileAgeDays < 7) {
@@ -79,25 +84,32 @@ function countEndpointVisitsPerService(service) {
                     visitCount++;
                     const entry = JSON.parse(line);
 
-                    mapCount(messages, entry.message);
-                    mapCount(cf_ip, entry.meta.req.cf_ip);
                     mapCount(remoteAddress, entry.meta.req.connection.remoteAddress);
+                    mapCount(cf_ip, entry.meta.req.cf_ip);
+                    mapCount(cf_connecting_ip, entry.meta.req.headers['cf-connecting-ip']);
+                    mapCount(x_forwarded_for, entry.meta.req.headers['x-forwarded-for']);
+                    mapCount(cf_ipcountry, entry.meta.req.headers['cf-ipcountry']);
+                    mapCount(host, entry.meta.req.headers['host']);
                     mapCount(accept, entry.meta.req.headers['accept']);
                     mapCount(referer, entry.meta.req.headers['referer']);
                     mapCount(userAgent, entry.meta.req.headers['user-agent']);
+                    mapCount(messages, entry.message);
                 }
             });
         }
     });
     return { 
         visitCount, 
-        messages: sortByValue(messages),
-        cf_ip: sortByValue(cf_ip),
         remoteAddress: sortByValue(remoteAddress),
+        cf_ip: sortByValue(cf_ip),
+        cf_connecting_ip: sortByValue(cf_connecting_ip),
+        x_forwarded_for: sortByValue(x_forwarded_for),
+        cf_ipcountry: sortByValue(cf_ipcountry),
+        host: sortByValue(host),
         accept: sortByValue(accept),
         referer: sortByValue(referer),
-        userAgent: sortByValue(userAgent)
-
+        userAgent: sortByValue(userAgent),
+        messages: sortByValue(messages)
     };
 }
 
