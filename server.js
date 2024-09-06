@@ -12,7 +12,13 @@ const services = fs.readdirSync(path.join(__dirname, '..')).filter(file => fs.st
 app.use(cloudflare.restore({update_on_start:true}));
 app.use(logger.visitReq());
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'main.html'));
+});
+
+app.get('/all', (req, res, next) => {
     const timeStart = Date.now();
     const visits = countVisits();
     const timeEnd = Date.now();
