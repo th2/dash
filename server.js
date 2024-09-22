@@ -71,10 +71,7 @@ function countVisitsPerService(service) {
 function countEndpointVisitsPerService(service) {
     makeSureLogDirExists(service);
     let visitCount = 0;
-    let remoteAddress = {};
-    let cf_ip = {};
-    let cf_connecting_ip = {};
-    let x_forwarded_for = {};
+    let ip = {};
     let cf_ipcountry = {};
     let host = {};
     let accept = {};
@@ -90,10 +87,7 @@ function countEndpointVisitsPerService(service) {
                     visitCount++;
                     const entry = JSON.parse(line);
 
-                    mapCount(remoteAddress, entry.meta.req.connection.remoteAddress);
-                    mapCount(cf_ip, entry.meta.req.cf_ip);
-                    mapCount(cf_connecting_ip, entry.meta.req.headers['cf-connecting-ip']);
-                    mapCount(x_forwarded_for, entry.meta.req.headers['x-forwarded-for']);
+                    mapCount(ip, unifyIP(entry));
                     mapCount(cf_ipcountry, entry.meta.req.headers['cf-ipcountry']);
                     mapCount(host, entry.meta.req.headers['host']);
                     mapCount(accept, entry.meta.req.headers['accept']);
@@ -107,10 +101,7 @@ function countEndpointVisitsPerService(service) {
     return { 
         visitCount, 
         details: {
-            remoteAddress: sortByValue(remoteAddress),
-            cf_ip: sortByValue(cf_ip),
-            cf_connecting_ip: sortByValue(cf_connecting_ip),
-            x_forwarded_for: sortByValue(x_forwarded_for),
+            ip: sortByValue(ip),
             cf_ipcountry: sortByValue(cf_ipcountry),
             host: sortByValue(host),
             accept: sortByValue(accept),
@@ -119,6 +110,17 @@ function countEndpointVisitsPerService(service) {
             messages: sortByValue(messages)
         }
     };
+}
+
+function unifyIP(entry) {
+    if (entry.meta.req.connection.remoteAddress === '::ffff:172.20.0.1' &&
+        entry.meta.req.cf_ip === entry.meta.req.headers['cf-connecting-ip'] &&
+        entry.meta.req.cf_ip === entry.meta.req.headers['x-forwarded-for']
+    ) {
+        return entry.meta.req.cf_ip + ' ' + entry.meta.req.headers['cf-ipcountry'];
+    } else {
+        return `${entry.meta.req.cf_ip} cf-connecting-ip: ${entry.meta.req.headers['cf-connecting-ip']} x-forwarded-for: ${entry.meta.req.headers['x-forwarded-for']} remoteAddress: ${entry.meta.req.connection.remoteAddress} cf-ipcountry: ${entry.meta.req.headers['cf-ipcountry']}`;
+    }
 }
 
 function sortByValue(obj) {
