@@ -27,7 +27,7 @@ app.get('/all', (req, res, next) => {
     res.send({ visits, timeElapsed });
 });
 
-app.get('/base', (req, res, next) => {
+app.post('/base', (req, res, next) => {
     const timeStart = Date.now();
     const visits = countEndpointVisitsPerService('base');
     const timeEnd = Date.now();
@@ -106,16 +106,18 @@ function countEndpointVisitsPerService(service) {
     });
     return { 
         visitCount, 
-        remoteAddress: sortByValue(remoteAddress),
-        cf_ip: sortByValue(cf_ip),
-        cf_connecting_ip: sortByValue(cf_connecting_ip),
-        x_forwarded_for: sortByValue(x_forwarded_for),
-        cf_ipcountry: sortByValue(cf_ipcountry),
-        host: sortByValue(host),
-        accept: sortByValue(accept),
-        referer: sortByValue(referer),
-        userAgent: sortByValue(userAgent),
-        messages: sortByValue(messages)
+        details: {
+            remoteAddress: sortByValue(remoteAddress),
+            cf_ip: sortByValue(cf_ip),
+            cf_connecting_ip: sortByValue(cf_connecting_ip),
+            x_forwarded_for: sortByValue(x_forwarded_for),
+            cf_ipcountry: sortByValue(cf_ipcountry),
+            host: sortByValue(host),
+            accept: sortByValue(accept),
+            referer: sortByValue(referer),
+            userAgent: sortByValue(userAgent),
+            messages: sortByValue(messages)
+        }
     };
 }
 

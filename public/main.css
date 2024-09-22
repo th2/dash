@@ -42,3 +42,11 @@ result-box {
     padding: 20px;
     margin-bottom: 20px;
 }
+
+.detail {
+    display: inline-block;
+    border: 1px solid black;
+    width: 300px;
+    overflow: scroll;
+    height: 500px;
+}
