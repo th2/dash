@@ -33,20 +33,57 @@ body {
 }
 
 #results {
-    margin-top: 50px;
-    padding: 20px;
-}
-
-result-box {
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 20px;
+    margin-top: 40px;
+    padding: 0px;
 }
 
 .detail {
     display: inline-block;
     border: 1px solid black;
-    width: 300px;
+    margin: 1px;
+}
+
+.detail h2 {
+    margin: 0;
+    background-color: white;
+    font-size: 1em;
+}
+
+.detail ul {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    height: 300px;
     overflow: scroll;
-    height: 500px;
+    list-style-type: none;
+}
+
+.detail a {
+    text-decoration: none;
+    color: black;
+}
+
+.detail-country {
+    width: 90px;
+}
+
+.detail-country ul {
+    width: 90px;
+}
+
+.detail-include {
+    background-color: green;
+}
+
+.detail-exclude {
+    background-color: darkred;
+}
+
+.detail-neutral {
+    background-color: white;
+}
+
+.count {
+    color: darkgray;
+    font-size: 0.8em;
 }
