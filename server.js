@@ -143,7 +143,47 @@ function filterEntry(entry, query) {
 const botUserAgents = [
     "Watchbot monitoring robot (https://watchbot.fflow.net)",
     "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)",
-    "Mozilla/5.0 (compatible; Let's Encrypt validation server; +https://www.letsencrypt.org)"
+    "Mozilla/5.0 (compatible; Let's Encrypt validation server; +https://www.letsencrypt.org)",
+    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    "IonCrawl (https://www.ionos.de/terms-gtc/faq-crawler-en/)",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15 (Applebot/0.1; +http://www.apple.com/go/applebot)",
+    "Pandalytics/2.0 (https://domainsbot.com/pandalytics/)",
+    "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36",
+    "serpstatbot/2.1 (advanced backlink tracking bot; https://serpstatbot.com/; abuse@serpstatbot.com)",
+    "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.2; +https://openai.com/gptbot)",
+    "CheckMarkNetwork/1.0 (+http://www.checkmarknetwork.com/spider.html)",
+    "Expanse, a Palo Alto Networks company, searches across the global IPv4 space multiple times per day to identify customers&#39; presences on the Internet. If you would like to be excluded from our scans, please send IP addresses/domains to: scaninfo@paloaltonetworks.com",
+    "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
+    "Mozilla/5.0 (compatible; InternetMeasurement/1.0; +https://internet-measurement.com/)",
+    "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.137 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    "Mozilla/5.0 (compatible; MJ12bot/v1.4.8; http://mj12bot.com/)",
+    "Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)",
+    "Mozilla/5.0 researchscan.comsys.rwth-aachen.de",
+    "Googlebot-Image/1.0",
+    "2ip bot/1.1 (+http://2ip.io)",
+    "Mozilla/5.0 (compatible; SemrushBot/7~bl; +http://www.semrush.com/bot.html)",
+    "Mozilla/5.0 (compatible; archive.org_bot +http://archive.org/details/archive.org_bot) Zeno/cfa2980 warc/v0.8.47",
+    "Mozilla/5.0 (compatible; archive.org_bot +http://archive.org/details/archive.org_bot) Zeno/6d512bb warc/v0.8.47",
+    "Mozilla/5.0 (compatible; archive.org_bot +http://archive.org/details/archive.org_bot) Zeno/08ba828 warc/v0.8.48",
+    "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.0; +https://openai.com/gptbot)",
+    "DomainStatsBot/1.0 (https://domainstats.com/pages/our-bot)",
+    "Timpibot/0.9 (+http://www.timpi.io)",
+    "ZoominfoBot (zoominfobot at zoominfo dot com)",
+    "Mozilla/5.0 (compatible; DataForSeoBot/1.0; +https://dataforseo.com/dataforseo-bot)",
+    "Mozilla/5.0 (compatible; DotBot/1.2; +https://opensiteexplorer.org/dotbot; help@moz.com)",
+    "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; ClaudeBot/1.0; +claudebot@anthropic.com)",
+    "Mozilla/5.0 (compatible; BLEXBot/1.0; +http://webmeup-crawler.com/)",
+    "Mozilla/5.0 (compatible; BitSightBot/1.0)",
+    "Mozilla/5.0 (compatible; SeekportBot; +https://bot.seekport.com)",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/601.2.4 (KHTML, like Gecko) Version/9.0.1 Safari/601.2.4 facebookexternalhit/1.1 Facebot Twitterbot/1.0",
+    "Gaisbot/3.0 (robot@gais.cs.ccu.edu.tw; http://gais.cs.ccu.edu.tw/robot.php)",
+    "TelegramBot (like TwitterBot)",
+    "msnbot-media/1.1 ( http://search.msn.com/msnbot.htm)",
+    "Mozilla/5.0 (compatible; Timpibot/0.8; +http://www.timpi.io)"
+
+
+
 ];
 var botIPs = new Set();
 var botIPvisits = {};
@@ -162,7 +202,9 @@ function isBotVisit(entry) {
         entry.messages === 'HTTP GET /view-source:' ||
         entry.messages === 'HTTP GET /misc/ajax.js' ||
         entry.messages === 'HTTP GET /chosen' ||
+        entry.messages === 'HTTP GET /tink_chat/' ||
         entry.messages === 'HTTP GET /max' ||
+        entry.messages === 'HTTP GET /a.nel.cloud' ||
         entry.messages === 'HTTP GET /?error=404' ||
         entry.messages === 'HTTP GET /.well-known/acme-challenge/file' ||
         entry.messages === 'HTTP GET /bet/lotteryinfo/allLotteryInfoList' ||
